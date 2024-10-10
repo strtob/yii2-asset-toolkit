@@ -167,79 +167,79 @@ var initListener = function () {
             toastr.success(lajax.t('Value copied to clipboard: ' + dataValue));
         });
 
-        $(document).on('click', '.showModal', function (event) {
-            console.log('showModal() listener');
-        
-            // Set invoker
-            var invoker = $(this);
-        
-            // Set modal title
-            var modalTitle = invoker.data('target-title') || 'Default Title';
-        
-            // Load URL
-            var url = invoker.data('url');
-        
-            // Modal size (optional) from data attribute
-            var modalSize = invoker.data('size') || '';  // small, large, extra-large, fullscreen, or '' for default size
-        
-            // Confirm button class (optional) from data attribute
-            var confirmBtnClass = invoker.data('confirmbtnclass') || 'btn-success';  // Default is success
-        
-            // Get the generic modal element
-            var elModal = $('#genericModal');
-        
-            // Find modal components
-            var elModalTitle = elModal.find('.modal-title');
-            var elModalBody = elModal.find('.modal-body');
-            var elConfirmButton = elModal.find('#confirmButton'); // Assuming #confirmButton exists in the modal
-            var elModalDialog = elModal.find('.modal-dialog'); // Modal dialog element for resizing
-        
-            // Set modal size by adding/removing the appropriate Bootstrap classes
-            elModalDialog.removeClass('modal-sm modal-lg modal-xl modal-fullscreen'); // Remove existing size classes
-            if (modalSize === 'small') {
-                elModalDialog.addClass('modal-sm');
-            } else if (modalSize === 'large') {
-                elModalDialog.addClass('modal-lg');
-            } else if (modalSize === 'extra-large') {
-                elModalDialog.addClass('modal-xl');
-            } else if (modalSize === 'fullscreen') {
-                elModalDialog.addClass('modal-fullscreen');
-            }
-        
-            // Set modal title
-            elModalTitle.html(modalTitle);
-        
-            // Set confirm button class
-            if (elConfirmButton.length) {
-                elConfirmButton.removeClass().addClass('btn ' + confirmBtnClass);
-            }
-        
-            // Check if URL is defined and load the content via AJAX
-            if (typeof url !== 'undefined') {
-                console.log('Data URL ' + url + ' begin ajax load into modal ' + elModal.attr('id'));
-        
-                // AJAX request to load content into the modal
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    success: function (response) {
-                        // Set response content in the modal body
-                        elModalBody.html(response);
-        
-                        // Show the modal after content is loaded
-                        elModal.modal('show');
-                    },
-                    error: function (response) {
-                        console.error("Error loading content into modal: ", response);
-                        elModalBody.html('<div class="alert alert-danger">Failed to load content.</div>');
-                        elModal.modal('show');
-                    }
-                });
-            } else {
-                console.error('No data-url defined for this event.');
-            }
-        });
-        
+    $(document).on('click', '.showModal', function (event) {
+        console.log('showModal() listener');
+
+        // Set invoker
+        var invoker = $(this);
+
+        // Set modal title
+        var modalTitle = invoker.data('target-title') || 'Default Title';
+
+        // Load URL
+        var url = invoker.data('url');
+
+        // Modal size (optional) from data attribute
+        var modalSize = invoker.data('size') || '';  // small, large, extra-large, fullscreen, or '' for default size
+
+        // Confirm button class (optional) from data attribute
+        var confirmBtnClass = invoker.data('confirmbtnclass') || 'btn-success';  // Default is success
+
+        // Get the generic modal element
+        var elModal = $('#genericModal');
+
+        // Find modal components
+        var elModalTitle = elModal.find('.modal-title');
+        var elModalBody = elModal.find('.modal-body');
+        var elConfirmButton = elModal.find('#confirmButton'); // Assuming #confirmButton exists in the modal
+        var elModalDialog = elModal.find('.modal-dialog'); // Modal dialog element for resizing
+
+        // Set modal size by adding/removing the appropriate Bootstrap classes
+        elModalDialog.removeClass('modal-sm modal-lg modal-xl modal-fullscreen'); // Remove existing size classes
+        if (modalSize === 'small') {
+            elModalDialog.addClass('modal-sm');
+        } else if (modalSize === 'large') {
+            elModalDialog.addClass('modal-lg');
+        } else if (modalSize === 'extra-large') {
+            elModalDialog.addClass('modal-xl');
+        } else if (modalSize === 'fullscreen') {
+            elModalDialog.addClass('modal-fullscreen');
+        }
+
+        // Set modal title
+        elModalTitle.html(modalTitle);
+
+        // Set confirm button class
+        if (elConfirmButton.length) {
+            elConfirmButton.removeClass().addClass('btn ' + confirmBtnClass);
+        }
+
+        // Check if URL is defined and load the content via AJAX
+        if (typeof url !== 'undefined') {
+            console.log('Data URL ' + url + ' begin ajax load into modal ' + elModal.attr('id'));
+
+            // AJAX request to load content into the modal
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (response) {
+                    // Set response content in the modal body
+                    elModalBody.html(response);
+
+                    // Show the modal after content is loaded
+                    elModal.modal('show');
+                },
+                error: function (response) {
+                    console.error("Error loading content into modal: ", response);
+                    elModalBody.html('<div class="alert alert-danger">Failed to load content.</div>');
+                    elModal.modal('show');
+                }
+            });
+        } else {
+            console.error('No data-url defined for this event.');
+        }
+    });
+
 
 
     // Listener: in case modal will be closed
@@ -282,6 +282,17 @@ var initListener = function () {
             return false;
         });
 
+    // Listener: Form with Ajax to submit for via ajax for create
+    $(document)
+        .off('beforeSubmit', "[data-target-content='true']")
+        .on('beforeSubmit', "[data-target-content='true']", function (event) {
+
+          
+            console.log('Form submitted with result to target content.');
+
+            submitFormAsAjax($(this), event, '#content');
+            return false;
+        });
 
     // Listener: Navigate to url e.g. button
     $(document)
@@ -399,13 +410,13 @@ var initListener = function () {
 
             // Set the confirmation button class
             $confirmButton.removeClass('btn-primary btn-danger btn-warning').addClass(confirmBtnClass);
-            $confirmButton.text('Confirm Delete').off('click').on('click', function() {
+            $confirmButton.text('Confirm Delete').off('click').on('click', function () {
                 // Perform the AJAX request
                 requestAjaxUrl(url, pjaxContainerIds, parameter, method);
                 modal.hide();
             });
 
-            $cancelButton.text('Cancel').off('click').on('click', function() {
+            $cancelButton.text('Cancel').off('click').on('click', function () {
                 modal.hide();
             });
 
@@ -426,7 +437,7 @@ var initListener = function () {
             $('#genericModalLabel').text(title);
 
             // Load content into modal body
-            $('.modal-body').load(url, parameter, function(response, status, xhr) {
+            $('.modal-body').load(url, parameter, function (response, status, xhr) {
                 if (status === "error") {
                     $('.modal-body').text("An error occurred while loading the content.");
                 }
@@ -662,14 +673,24 @@ var ajaxMessage = function (response) {
 
 
         // check if redirect
-        if (response.data.redirectUrl != null)
-            window.location.href = response.data.redirectUrl;
-    }
-    else {
-        toastr.error(lajax.t("Response report an error. Please see the console for more details."), lajax.t("Response Error"));
-        console.log(response);
-    }
-};
+        if (response.data.redirectUrl != null) {
+            if (response.data.redirectTarget != null) {
+                console.log('Redirect to: ' + response.data.redirectUrl + ' with target: ' + response.data.redirectTarget);
+                loadAjaxInDiv(response.data.redirectTarget, response.data.redirectUrl);
+            } else {
+
+                console.log('Redirect to: ' + response.data.redirectUrl);
+                window.location.href = response.data.redirectUrl;
+            }
+
+        }
+        else {
+            toastr.error(lajax.t("Response report an error. Please see the console for more details."), lajax.t("Response Error"));
+            console.log(response);
+        }
+    };
+}
+
 /**
  * Refresh one or more pjax container, if more than one must be comma separated
  * @param {type} containerids
@@ -732,9 +753,6 @@ var refreshPjax = function (containerids) {
         console.log('refresPjax(): containerIds are no string or array, can not handle!');
         console.log('Have: ' + containerids);
     }
-
-
-
 }
 
 
@@ -745,7 +763,7 @@ var refreshPjax = function (containerids) {
  * @returns {Boolean}
  */
 
-var submitFormAsAjax = function (form, event) {
+var submitFormAsAjax = function (form, event, targetDiv = null) {
     console.log('submitFormAsAjax(): action');
     // return false if form still have some validation errors
     if (form.find('.has-error').length) {
@@ -816,8 +834,7 @@ var submitFormAsAjax = function (form, event) {
                         }
                     }
                 }
-                else
-                {
+                else {
                     console.log('Db_lock not updated!');
                     console.log(response.data);
                 }
@@ -829,7 +846,7 @@ var submitFormAsAjax = function (form, event) {
                 // show success message
                 ajaxMessage(response);
 
-
+             
             } else {
                 console.log("submitFormAsAjax(): Error validation and saving record");
 
@@ -857,10 +874,7 @@ var submitFormAsAjax = function (form, event) {
             toastr.error(response.data);
             console.log(response);
         });
-
-
 }
-
 
 /**
  * Load content via ajax into container

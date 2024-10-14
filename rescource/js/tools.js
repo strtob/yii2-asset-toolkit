@@ -287,7 +287,7 @@ var initListener = function () {
         .off('beforeSubmit', "[data-target-content='true']")
         .on('beforeSubmit', "[data-target-content='true']", function (event) {
 
-          
+
             console.log('Form submitted with result to target content.');
 
             submitFormAsAjax($(this), event, '#content');
@@ -666,7 +666,7 @@ var ajaxMessage = function (response) {
         console.log('Response.data parameter in call of ajaxMessage not defined!');
         return false;
     }
-
+    console.log(response.data.success);
     if (response.data.success === true) {
         // show success message
         toastr.success(response.data.message, response.data.title);
@@ -682,13 +682,13 @@ var ajaxMessage = function (response) {
                 console.log('Redirect to: ' + response.data.redirectUrl);
                 window.location.href = response.data.redirectUrl;
             }
+        }
+    }
+    else {
+        toastr.error(lajax.t("Response report an error. Please see the console for more details."), lajax.t("Response Error"));
+        console.log(response);
+    }
 
-        }
-        else {
-            toastr.error(lajax.t("Response report an error. Please see the console for more details."), lajax.t("Response Error"));
-            console.log(response);
-        }
-    };
 }
 
 /**
@@ -846,7 +846,7 @@ var submitFormAsAjax = function (form, event, targetDiv = null) {
                 // show success message
                 ajaxMessage(response);
 
-             
+
             } else {
                 console.log("submitFormAsAjax(): Error validation and saving record");
 

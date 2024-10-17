@@ -180,7 +180,9 @@ var initListener = function () {
         var url = invoker.data('url');
 
         // Modal size (optional) from data attribute
-        var modalSize = invoker.data('size') || '';  // small, large, extra-large, fullscreen, or '' for default size
+        var modalSize = invoker.data('bs-target') || '';  // small, large, extra-large, fullscreen, or '' for default size
+
+        console.log('Modal size: ' + modalSize);
 
         // Confirm button class (optional) from data attribute
         var confirmBtnClass = invoker.data('confirmbtnclass') || 'btn-success';  // Default is success
@@ -200,12 +202,12 @@ var initListener = function () {
             elModalDialog.addClass('modal-sm');
         } else if (modalSize === 'large') {
             elModalDialog.addClass('modal-lg');
-        } else if (modalSize === 'extra-large') {
+        } else if (modalSize === 'extra-large' || modalSize === 'modal-xl') {            
             elModalDialog.addClass('modal-xl');
-        } else if (modalSize === 'fullscreen') {
+        } else if (modalSize === 'fullscreen' || modalSize === 'modal-fullscreen') {
             elModalDialog.addClass('modal-fullscreen');
         }
-
+                
         // Set modal title
         elModalTitle.html(modalTitle);
 
@@ -416,9 +418,10 @@ var initListener = function () {
                 modal.hide();
             });
 
-            $cancelButton.text('Cancel').off('click').on('click', function () {
-                modal.hide();
-            });
+            $cancelButton.text('Cancel')
+                .off('click').on('click', function () {
+                    modal.hide();
+                });
 
             // Set title and confirmation message
             $('#genericModalLabel').text(title);

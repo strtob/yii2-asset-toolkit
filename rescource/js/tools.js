@@ -226,7 +226,7 @@ var initListener = function () {
                 type: 'GET',
                 success: function (response) {
                     if (response) {
-                        console.log(response.data.message);
+                       
                         if (response.data && response.data.message) {
                             
                             const message = response.data.message;

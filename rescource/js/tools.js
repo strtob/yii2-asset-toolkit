@@ -225,13 +225,16 @@ var initListener = function () {
                 url: url,
                 type: 'GET',
                 success: function (response) {
-                    // Set response content in the modal body
-                    if (response && response.data && response.data.success === false) {
-                        elModalBody.html('<div class="alert alert-danger">' + response.data.message + '</div>');
+                    if (response) {
+                        if (response.data && response.data.message) {
+                            const message = response.data.message;
+                            const alertType = response.data.success === true ? 'success' : 'danger';
+                            elModalBody.html('<div class="alert alert-' + alertType + '">' + message + '</div>');
+                        } else {
+                            elModalBody.html(response);
+                        }
                     }
-                    else
-                        elModalBody.html(response);
-
+                    
                     // Show the modal after content is loaded
                     elModal.modal('show');
                 },

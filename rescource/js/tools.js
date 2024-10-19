@@ -226,10 +226,13 @@ var initListener = function () {
                 type: 'GET',
                 success: function (response) {
                     if (response) {
+                        console.log(response.data.message);
                         if (response.data && response.data.message) {
+                            
                             const message = response.data.message;
+                            const messageDetails = response.data.messageDetails ? response.data.messageDetails : '';
                             const alertType = response.data.success === true ? 'success' : 'danger';
-                            elModalBody.html('<div class="alert alert-' + alertType + '">' + message + '</div>');
+                            elModalBody.html('<div class="alert alert-' + alertType + '">' + message + '</div>' + messageDetails);
                         } else {
                             elModalBody.html(response);
                         }

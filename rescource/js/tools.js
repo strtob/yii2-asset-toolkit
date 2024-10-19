@@ -202,12 +202,12 @@ var initListener = function () {
             elModalDialog.addClass('modal-sm');
         } else if (modalSize === 'large') {
             elModalDialog.addClass('modal-lg');
-        } else if (modalSize === 'extra-large' || modalSize === 'modal-xl') {            
+        } else if (modalSize === 'extra-large' || modalSize === 'modal-xl') {
             elModalDialog.addClass('modal-xl');
         } else if (modalSize === 'fullscreen' || modalSize === 'modal-fullscreen') {
             elModalDialog.addClass('modal-fullscreen');
         }
-                
+
         // Set modal title
         elModalTitle.html(modalTitle);
 
@@ -226,7 +226,11 @@ var initListener = function () {
                 type: 'GET',
                 success: function (response) {
                     // Set response content in the modal body
-                    elModalBody.html(response);
+                    if (response && response.data && response.data.success === false) {
+                        elModalBody.html('<div class="alert alert-danger">' + response.data.message + '</div>');
+                    }
+                    else
+                        elModalBody.html(response);
 
                     // Show the modal after content is loaded
                     elModal.modal('show');

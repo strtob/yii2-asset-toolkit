@@ -972,12 +972,13 @@ var updateDbLock = function (id = 'db_lock', version) {
 }
 
 
-var requestAjaxUrl = function (url, pjaxContainerids, data = '', requestType = 'GET') {
+var requestAjaxUrl = function (url, pjaxContainerids, data = '', requestType = 'GET', showLoader = true) {
     // Submit form as AJAX (if no errors)
     $.ajax({
         url: url,
         data: data,
         type: requestType,
+        showLoader: showLoader,
     })
         .done(function (response) {
 

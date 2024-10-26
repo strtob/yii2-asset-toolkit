@@ -679,7 +679,7 @@ var ajaxMessage = function (response) {
         console.log('Response.data parameter in call of ajaxMessage not defined!');
         return false;
     }
-    console.log(response.data.success);
+    
     if (response.data.success === true) {
         // show success message
         toastr.success(response.data.message, response.data.title);
@@ -697,9 +697,12 @@ var ajaxMessage = function (response) {
             }
         }
     }
-    else {
-        toastr.error(lajax.t("Response report an error. Please see the console for more details."), lajax.t("Response Error"));
-        console.log(response);
+    else {        
+        if(response.data.message != null)
+            toastr.error(response.data.message, response.data.title);
+        else
+            toastr.error(lajax.t("Response report an error. Please see the console for more details."), lajax.t("Response Error"));
+            console.log(response.data);
     }
 
 }

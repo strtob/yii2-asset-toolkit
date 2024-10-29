@@ -7,7 +7,7 @@ use yii\web\AssetBundle;
 class DropzoneAsset extends AssetBundle
 {
 
-    public $sourcePath = '@vendor/strtob/yii2-asset-toolkit/resource/node_modules/dropzone/dist';
+    public $sourcePath = '@vendor/strtob/yii2-asset-toolkit/rescource/node_modules/dropzone/dist';
     public $css = [
         'dropzone.css',
     ];

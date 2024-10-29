@@ -4,7 +4,13 @@
     "type": "library",
     "autoload": {
         "psr-4": {
-            "strtob\\yii2-asset-toolkit\\": "src/"
+            "strtob\\yii2AssetToolkit\\": "src/"
         }
-    }
+    },
+    "authors": [
+        {
+            "name": "Tobias Streckel",
+            "email": "ts@re-soft.de"
+        }
+    ],
 }

@@ -7,7 +7,7 @@ use yii\web\AssetBundle;
 class ToastrAsset extends AssetBundle
 {
     // The path to the toastr.js files in node_modules
-    public $sourcePath = '@vendor/strtob/yii2-toastr-asset/resource/'; // Adjust path if necessary
+    public $sourcePath = '@vendor/strtob/yii2-asset-toolkit/resource/'; // Adjust path if necessary
 
     public $css = [
         'node_modules/toastr/build/toastr.min.css',

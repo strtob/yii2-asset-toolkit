@@ -226,9 +226,9 @@ var initListener = function () {
                 type: 'GET',
                 success: function (response) {
                     if (response) {
-                       
+
                         if (response.data && response.data.message) {
-                            
+
                             const message = response.data.message;
                             const messageDetails = response.data.messageDetails ? response.data.messageDetails : '';
                             const alertType = response.data.success === true ? 'success' : 'danger';
@@ -237,7 +237,7 @@ var initListener = function () {
                             elModalBody.html(response);
                         }
                     }
-                    
+
                     // Show the modal after content is loaded
                     elModal.modal('show');
                 },
@@ -389,56 +389,73 @@ var initListener = function () {
             });
 
     $(document).on('click', '.requestAjaxUrl', function (event) {
-        // Set invoker
+        event.preventDefault(); // Prevent default action
+
+        // Get invoker element and data attributes
         var invoker = $(this);
-        // Request URL
         var url = invoker.data('url');
-        // Request method
-        var method = invoker.data('method');
-        // Request parameter
-        var parameter = invoker.data('parameter');
-        // Pjax container IDs
-        var pjaxContainerIds = invoker.data('pjaxcontainerids');
-        // Prompt for confirmation
+        var method = invoker.data('method') || 'GET';
+        var parameter = invoker.data('parameter') || {};
+        var pjaxContainerIds = invoker.data('pjaxcontainerids') || '';
         var confirmationMessage = invoker.data('promptmessage');
-        // Title from data-title attribute
-        var title = invoker.data('title') || 'Default Title'; // Fallback to 'Default Title' if data-title is not set
-        // Modal type
-        var modalType = invoker.data('modaltype') || 'normal'; // Default to 'normal' if not set
-        // Confirmation button class
-        var confirmBtnClass = invoker.data('confirmbtnclass') || 'btn-primary'; // Default to 'btn-primary' if not set
+        var title = invoker.data('title') || 'Default Title';
+        var modalType = invoker.data('modaltype') || 'normal';
+        var confirmBtnClass = invoker.data('confirmbtnclass') || 'btn-primary';
 
         // Get modal elements
         var $modalDialog = $('#modal-dialog');
         var $modalFooter = $('#modal-footer');
-        var $confirmButton = $('#confirmButton');
+        var $confirmButton = $('#modal-footer .btn-success');
         var $cancelButton = $('#modal-footer .btn-secondary');
 
-        // Configure modal based on type
+        // Initialize Bootstrap modal instance
+        var modal = new bootstrap.Modal(document.getElementById('genericModal'));
+
+        // Configure modal based on confirmation or content display
         if (confirmationMessage) {
-            // Configuration for confirmation modal
+            // Configure as a confirmation modal
             $modalDialog.removeClass('modal-xl modal-fullscreen').addClass('modal-sm');
-            $modalFooter.show();
+            $modalFooter.show(); // Show footer for confirmation
 
-            // Set the confirmation button class
-            $confirmButton.removeClass('btn-primary btn-danger btn-warning').addClass(confirmBtnClass);
-            $confirmButton.text('Confirm Delete').off('click').on('click', function () {
-                // Perform the AJAX request
-                requestAjaxUrl(url, pjaxContainerIds, parameter, method);
-                modal.hide();
-            });
+            // Configure confirmation and cancel buttons
+            $confirmButton
+                .removeClass('btn-primary btn-danger btn-warning')
+                .addClass(confirmBtnClass)
+                .text('Confirm') // Set text based on purpose
+                .off('click')
+                .on('click', function () {
+                    // Perform AJAX request on confirm button click
+                    $.ajax({
+                        url: url,
+                        type: method,
+                        data: parameter,
+                        success: function (response) {
+                            // Hide modal after successful request
+                            modal.hide();
+                            // Reload pjax containers if specified
+                            if (pjaxContainerIds) {
+                                $.pjax.reload({ container: pjaxContainerIds });
+                            }
+                        },
+                        error: function (xhr) {
+                            console.error("Error:", xhr);
+                            $('.modal-body').text("An error occurred while processing your request.");
+                        }
+                    });
+                });
 
-            $cancelButton.text('Cancel')
-                .off('click').on('click', function () {
+            $cancelButton
+                .text('Cancel')
+                .off('click')
+                .on('click', function () {
                     modal.hide();
                 });
 
-            // Set title and confirmation message
+            // Set modal title and body
             $('#genericModalLabel').text(title);
             $('.modal-body').text(confirmationMessage);
-
         } else {
-            // Configuration for content display modal
+            // Configure as a content display modal
             if (modalType === 'fullscreen') {
                 $modalDialog.removeClass('modal-xl modal-sm').addClass('modal-fullscreen');
             } else {
@@ -446,10 +463,8 @@ var initListener = function () {
             }
             $modalFooter.hide(); // Hide footer for content-only modals
 
-            // Set title
+            // Set title and load content
             $('#genericModalLabel').text(title);
-
-            // Load content into modal body
             $('.modal-body').load(url, parameter, function (response, status, xhr) {
                 if (status === "error") {
                     $('.modal-body').text("An error occurred while loading the content.");
@@ -458,11 +473,14 @@ var initListener = function () {
         }
 
         // Show the modal
-        var modal = new bootstrap.Modal(document.getElementById('genericModal'));
         modal.show();
     });
 
 
+    // Hide the footer when the modal closes
+    $('#genericModal').on('hide.bs.modal', function () {
+        $('#modal-footer').hide();
+    });
 
 
 
@@ -679,7 +697,7 @@ var ajaxMessage = function (response) {
         console.log('Response.data parameter in call of ajaxMessage not defined!');
         return false;
     }
-    
+
     if (response.data.success === true) {
         // show success message
         toastr.success(response.data.message, response.data.title);
@@ -697,12 +715,12 @@ var ajaxMessage = function (response) {
             }
         }
     }
-    else {        
-        if(response.data.message != null)
+    else {
+        if (response.data.message != null)
             toastr.error(response.data.message, response.data.title);
         else
             toastr.error(lajax.t("Response report an error. Please see the console for more details."), lajax.t("Response Error"));
-            console.log(response.data);
+        console.log(response.data);
     }
 
 }

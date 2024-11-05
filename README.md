@@ -10,21 +10,7 @@ This repository contains a collection of asset files for managing frontend libra
 
 ## Installation
 
-To install and use these assets in your Yii2 project, follow these steps:
+You can install the asset toolkit via Composer. Run the following command in your project directory:
 
-1. Clone the repository:
-    ```bash
-    git clone git@github.com:your-username/your-repository.git
-    ```
-
-2. Move the asset files to your Yii2 application's `assets` directory, typically located at `@app/assets`.
-
-## Usage
-
-Include the assets in your application configuration or directly in your views. For example, you can include the Bootstrap Icons asset in your `AppAsset.php`:
-
-```php
-public $depends = [
-    'app\assets\BootstrapIconsAsset',
-    // other dependencies...
-];
+```bash
+composer require strtob/yii2-asset-toolkit

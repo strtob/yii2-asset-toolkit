@@ -436,6 +436,9 @@ var initListener = function () {
                             if (pjaxContainerIds) {
                                 $.pjax.reload({ container: pjaxContainerIds });
                             }
+                            // Show success message
+                            console.log(response);
+                            ajaxMessage(response);
                         },
                         error: function (xhr) {
                             console.error("Error:", xhr);

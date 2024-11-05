@@ -10,7 +10,7 @@ class BootstrapIconsAsset extends AssetBundle
     public $sourcePath = '@vendor/strtob/yii2-asset-toolkit/rescource/node_modules/bootstrap-icons'; 
 
     public $css = [
-        'bootstrap-icons.min.css',
+        'font/bootstrap-icons.min.css',
     ];
 
     public $js = [       

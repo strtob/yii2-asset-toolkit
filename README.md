@@ -1,4 +1,4 @@
-# Project Name
+# Yii2 Asset Toolkit
 
 ## Description
 This repository contains a collection of asset files for managing frontend libraries and frameworks in a Yii2 application. The files include:
@@ -6,7 +6,7 @@ This repository contains a collection of asset files for managing frontend libra
 - **BootstrapIconsAsset.php**: Asset bundle for integrating Bootstrap icons into your Yii2 application.
 - **DropzoneAsset.php**: Asset bundle for adding drag-and-drop file upload functionality with Dropzone.js.
 - **JsToolkitAsset.php**: Asset bundle for JavaScript toolkits to enhance client-side interactivity.
-- **ToastrAsset.php**: Asset bundle for Toastr notifications for better user feedback.
+- **VisibilityManagerAsset.php**: Asset bundle for managing the visibility of form elements based on dynamic user input, such as dropdown selections.
 
 ## Installation
 

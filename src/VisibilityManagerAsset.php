@@ -1,3 +1,5 @@
+<?php
+
 namespace strtob\yii2AssetToolkit;
 
 use yii\web\AssetBundle;

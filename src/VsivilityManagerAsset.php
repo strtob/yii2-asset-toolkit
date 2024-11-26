@@ -2,7 +2,7 @@ namespace strtob\yii2AssetToolkit;
 
 use yii\web\AssetBundle;
 
-class VsivilityManagerAsset extends AssetBundle
+class VisibilityManagerAsset extends AssetBundle
 {
     
     public $sourcePath = '@vendor/strtob/yii2-asset-toolkit/rescource/'; // Adjust path if necessary

@@ -60,9 +60,11 @@ class VisibilityManager {
 
             // Check if the element exists on the page
             if (!eventElement) {
-                console.warn(`Element ${ruleConfig.eventElement} not found.`);
+                console.warn(`VisibilityManager: Element ${ruleConfig.eventElement} not found.`);
                 return;
             }
+
+            console.log(`VisibilityManager: Adding event listener for ${ruleConfig.eventType} on ${ruleConfig.eventElement}`);
 
             // Add event listener for the specified event type (e.g., 'change')
             eventElement.addEventListener(ruleConfig.eventType, () => {
@@ -83,22 +85,29 @@ class VisibilityManager {
         // Find the matching rule for the current value or use the default rule
         const rule = config.rules.find(r => r.value === value) || config.rules.find(r => r.value === 'default');
         
-        // If no rule is found, exit early
-        if (!rule) return;
+        // If no rule is found, log and exit early
+        if (!rule) {
+            console.warn(`VisibilityManager: No matching rule found for value "${value}" in element ${config.eventElement}`);
+            return;
+        }
+
+        console.log(`VisibilityManager: Applying actions for value "${value}" in ${config.eventElement}`);
 
         // Apply actions defined in the rule (show or hide elements)
         rule.actions.forEach(action => {
             const element = document.querySelector(action.element);
             
             if (!element) {
-                console.warn(`Element ${action.element} not found.`);
+                console.warn(`VisibilityManager: Element ${action.element} not found.`);
                 return;
             }
 
             // Perform the show or hide action
             if (action.action === 'hide') {
+                console.log(`VisibilityManager: Hiding element ${action.element}`);
                 element.style.display = 'none';
             } else if (action.action === 'show') {
+                console.log(`VisibilityManager: Showing element ${action.element}`);
                 element.style.display = '';
             }
         });

@@ -78,7 +78,7 @@ class VisibilityManagerAsset extends AssetBundle
      * This includes the custom JavaScript file `VisibilityManagerAsset.js` for visibility management.
      */
     public $js = [      
-        'js/VsivilityManagerAsset.js',
+        'js/VisibilityManagerAsset.js',
     ];
 
     /**

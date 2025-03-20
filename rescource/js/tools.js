@@ -488,20 +488,36 @@ var initListener = function () {
 
 
 
-
-
     // show standard error
-    $(document)
-        .ajaxError(function (event, request, settings, thrownError) {
-            var result = '';
-            if (request.data !== undefined)
-                result = ' (' + request.data + ')';
-            toastr.error(lajax.t("An error in client call occurs. Please see the console for more details.") + result, lajax.t("Request Error"));
-            console.log(event);
-            console.log(request);
-            console.log(settings);
-            console.log(thrownError);
-        });
+    $.ajaxSetup({
+        beforeSend: function (jqXHR, settings) {
+            // Default showToastr to true if not explicitly set
+            settings.showToastr = settings.showToastr !== false;
+        }
+    });
+
+    // Global AJAX Error Handling
+    $(document).ajaxError(function (event, request, settings, thrownError) {
+        var result = '';
+        if (request.data !== undefined) {
+            result = ' (' + request.data + ')';
+        }
+
+        // Only show Toastr if showToastr is true
+        console.log('Show toaster ' + settings.showToastr);
+        if (settings.showToastr) {
+            toastr.error(
+                lajax.t("An error in client call occurs. Please see the console for more details.") + result,
+                lajax.t("Request Error")
+            );
+        }
+
+        console.log(event);
+        console.log(request);
+        console.log(settings);
+        console.log(thrownError);
+    });
+
 
     // delete listener to prompt for delete button
     $(document)

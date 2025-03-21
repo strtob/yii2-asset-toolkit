@@ -167,6 +167,44 @@ var initListener = function () {
             toastr.success(lajax.t('Value copied to clipboard: ' + dataValue));
         });
 
+     
+    // AJAX call when a button is clicked
+    $(document).on('click', '.ajaxButton', function (event) {
+        event.preventDefault(); // Prevent default action
+
+        // Get invoker element and data attributes
+        var invoker = $(this);
+        var url = invoker.data('url'); // Get URL from data-url attribute
+        var method = invoker.data('method') || 'GET'; // Default method is GET
+        var parameter = invoker.data('parameter') || {}; // Optional parameters
+        var showLoader = invoker.data('showLoader') !== undefined ? invoker.data('showLoader') : true; // Default to true if no value
+        var showToastr = invoker.data('showToastr') !== undefined ? invoker.data('showToastr') : true; // Default to true if no value
+
+        var successMessage = invoker.data('success-message') || 'Request successful!';
+        var errorMessage = invoker.data('error-message') || 'An error occurred during the request.';
+
+        // Perform AJAX request
+        $.ajax({
+            url: url,
+            type: method,
+            data: parameter,
+            showLoader: showLoader,
+            showToastr: showToastr,
+            success: function (response) {
+                // Handle success
+                toastr.success(successMessage);
+                console.log('Success:', response);
+                // Additional actions (e.g., updating the page or reloading content)
+            },
+            error: function (xhr, status, error) {
+                // Handle error
+                toastr.error(errorMessage);
+                console.log('Error:', xhr, status, error);
+            }
+        });
+    });
+
+    
     $(document).on('click', '.showModal', function (event) {
         console.log('showModal() listener');
 

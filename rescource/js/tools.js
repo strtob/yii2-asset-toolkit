@@ -169,9 +169,9 @@ var initListener = function () {
 
      
     // AJAX call when a button is clicked
-    $(document).on('click', '.ajaxButton', function (event) {
+   $(document).on('click', '.ajaxButton', function (event) {
         event.preventDefault(); // Prevent default action
-
+    
         // Get invoker element and data attributes
         var invoker = $(this);
         var url = invoker.data('url'); // Get URL from data-url attribute
@@ -179,10 +179,11 @@ var initListener = function () {
         var parameter = invoker.data('parameter') || {}; // Optional parameters
         var showLoader = invoker.data('showLoader') !== undefined ? invoker.data('showLoader') : true; // Default to true if no value
         var showToastr = invoker.data('showToastr') !== undefined ? invoker.data('showToastr') : true; // Default to true if no value
-
+    
         var successMessage = invoker.data('success-message') || 'Request successful!';
         var errorMessage = invoker.data('error-message') || 'An error occurred during the request.';
-
+        var pjaxContainerIds = invoker.data('pjaxcontainerids'); // Get pjax container IDs from data-pjaxcontainerids attribute
+    
         // Perform AJAX request
         $.ajax({
             url: url,
@@ -194,6 +195,14 @@ var initListener = function () {
                 // Handle success
                 toastr.success(successMessage);
                 console.log('Success:', response);
+    
+                // Reload pjax containers (if provided)
+                if (pjaxContainerIds) {
+                    var containerIds = pjaxContainerIds.split(','); // Split by comma for multiple containers
+                    containerIds.forEach(function (containerId) {
+                        $.pjax.reload({ container: containerId.trim() }); // Trim to remove extra spaces
+                    });
+                }
                 // Additional actions (e.g., updating the page or reloading content)
             },
             error: function (xhr, status, error) {

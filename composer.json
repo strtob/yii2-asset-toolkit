@@ -1,0 +1,16 @@
+{
+    "name": "strtob/yii2-asset-toolkit",
+    "description": "A Yii2 js asset toolkit with js helpers and script, e.g. open modal window with bootstrap by class.",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "strtob\\yii2AssetToolkit\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Tobias Streckel",
+            "email": "ts@re-soft.de"
+        }
+    ]
+}

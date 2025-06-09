@@ -215,89 +215,86 @@ var initListener = function () {
 
     
     $(document).on('click', '.showModal', function (event) {
-        console.log('showModal() listener');
+    console.log('showModal() listener');
 
-        // Set invoker
-        var invoker = $(this);
+    // Set invoker
+    var invoker = $(this);
 
-        // Set modal title
-        var modalTitle = invoker.data('target-title') || 'Default Title';
+    // Set modal title
+    var modalTitle = invoker.data('target-title') || 'Default Title';
 
-        // Load URL
-        var url = invoker.data('url');
+    // Load URL
+    var url = invoker.data('url');
 
-        // Modal size (optional) from data attribute
-        var modalSize = invoker.data('bs-target') || '';  // small, large, extra-large, fullscreen, or '' for default size
+    // Modal size (optional) from data attribute
+    var modalSize = invoker.data('bs-target') || '';  // small, large, extra-large, fullscreen, or '' for default size
+    console.log('Modal size: ' + modalSize);
 
-        console.log('Modal size: ' + modalSize);
+    // Confirm button class (optional)
+    var confirmBtnClass = invoker.data('confirmbtnclass') || 'btn-success';  // Default is success
 
-        // Confirm button class (optional) from data attribute
-        var confirmBtnClass = invoker.data('confirmbtnclass') || 'btn-success';  // Default is success
+    // Modal ID (support for nested modals, default to genericModal)
+    var modalId = invoker.data('modal-id') || 'genericModal';
+    var elModal = $('#' + modalId);
 
-        // Get the generic modal element
-        var elModal = $('#genericModal');
+    // Find modal components
+    var elModalTitle = elModal.find('.modal-title');
+    var elModalBody = elModal.find('.modal-body');
+    var elConfirmButton = elModal.find('#confirmButton'); // Optional confirm button
+    var elModalDialog = elModal.find('.modal-dialog');    // For resizing
 
-        // Find modal components
-        var elModalTitle = elModal.find('.modal-title');
-        var elModalBody = elModal.find('.modal-body');
-        var elConfirmButton = elModal.find('#confirmButton'); // Assuming #confirmButton exists in the modal
-        var elModalDialog = elModal.find('.modal-dialog'); // Modal dialog element for resizing
+    // Set modal size
+    elModalDialog.removeClass('modal-sm modal-lg modal-xl modal-fullscreen');
+    if (modalSize === 'small') {
+        elModalDialog.addClass('modal-sm');
+    } else if (modalSize === 'large') {
+        elModalDialog.addClass('modal-lg');
+    } else if (modalSize === 'extra-large' || modalSize === 'modal-xl') {
+        elModalDialog.addClass('modal-xl');
+    } else if (modalSize === 'fullscreen' || modalSize === 'modal-fullscreen') {
+        elModalDialog.addClass('modal-fullscreen');
+    }
 
-        // Set modal size by adding/removing the appropriate Bootstrap classes
-        elModalDialog.removeClass('modal-sm modal-lg modal-xl modal-fullscreen'); // Remove existing size classes
-        if (modalSize === 'small') {
-            elModalDialog.addClass('modal-sm');
-        } else if (modalSize === 'large') {
-            elModalDialog.addClass('modal-lg');
-        } else if (modalSize === 'extra-large' || modalSize === 'modal-xl') {
-            elModalDialog.addClass('modal-xl');
-        } else if (modalSize === 'fullscreen' || modalSize === 'modal-fullscreen') {
-            elModalDialog.addClass('modal-fullscreen');
-        }
+    // Set modal title
+    elModalTitle.html(modalTitle);
 
-        // Set modal title
-        elModalTitle.html(modalTitle);
+    // Set confirm button class (if exists)
+    if (elConfirmButton.length) {
+        elConfirmButton.removeClass().addClass('btn ' + confirmBtnClass);
+    }
 
-        // Set confirm button class
-        if (elConfirmButton.length) {
-            elConfirmButton.removeClass().addClass('btn ' + confirmBtnClass);
-        }
+    // Load content via AJAX if URL is defined
+    if (typeof url !== 'undefined') {
+        console.log('Data URL ' + url + ' begin ajax load into modal ' + elModal.attr('id'));
 
-        // Check if URL is defined and load the content via AJAX
-        if (typeof url !== 'undefined') {
-            console.log('Data URL ' + url + ' begin ajax load into modal ' + elModal.attr('id'));
-
-            // AJAX request to load content into the modal
-            $.ajax({
-                url: url,
-                type: 'GET',
-                success: function (response) {
-                    if (response) {
-
-                        if (response.data && response.data.message) {
-
-                            const message = response.data.message;
-                            const messageDetails = response.data.messageDetails ? response.data.messageDetails : '';
-                            const alertType = response.data.success === true ? 'success' : 'danger';
-                            elModalBody.html('<div class="alert alert-' + alertType + '">' + message + '</div>' + messageDetails);
-                        } else {
-                            elModalBody.html(response);
-                        }
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (response) {
+                if (response) {
+                    if (response.data && response.data.message) {
+                        const message = response.data.message;
+                        const messageDetails = response.data.messageDetails ? response.data.messageDetails : '';
+                        const alertType = response.data.success === true ? 'success' : 'danger';
+                        elModalBody.html('<div class="alert alert-' + alertType + '">' + message + '</div>' + messageDetails);
+                    } else {
+                        elModalBody.html(response);
                     }
-
-                    // Show the modal after content is loaded
-                    elModal.modal('show');
-                },
-                error: function (response) {
-                    console.error("Error loading content into modal: ", response);
-                    elModalBody.html('<div class="alert alert-danger">Failed to load content.</div>');
-                    elModal.modal('show');
                 }
-            });
-        } else {
-            console.error('No data-url defined for this event.');
-        }
-    });
+
+                // Show the modal after content is loaded
+                elModal.modal('show');
+            },
+            error: function (response) {
+                console.error("Error loading content into modal: ", response);
+                elModalBody.html('<div class="alert alert-danger">Failed to load content.</div>');
+                elModal.modal('show');
+            }
+        });
+    } else {
+        console.error('No data-url defined for this event.');
+    }
+});
 
 
 

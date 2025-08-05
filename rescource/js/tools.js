@@ -881,96 +881,96 @@ var submitFormAsAjax = function (form, event, targetDiv = null) {
     }
 
 
-    // Submit form as AJAX (if no errors)
-    $.ajax({
-        url: form.attr('action'),
-        type: 'POST',
-        data: form.serializeArray(),
-    })
-        .done(function (response) {
-            if ((typeof response.data !== "undefined") && (response.data.success === true)) {
+   // Submit form as AJAX (if no errors)
+$.ajax({
+    url: form.attr('action'),
+    type: 'POST',
+    data: form.serializeArray(),
+})
+    .done(function (response) {
+        if ((typeof response.data !== "undefined") && (response.data.success === true)) {
 
-                // remove validation check in input fields
-                form.find('.is-valid').removeClass('is-valid');
+            // remove validation check in input fields
+            form.find('.is-valid').removeClass('is-valid');
 
-                /* Call function after ajax call from form attribute: data-afterajaxcall  */
-                afterAjaxSuccess = form.data('afterajaxsuccess');
+            /* Call function after ajax call from form attribute: data-afterajaxcall  */
+            const afterAjaxSuccess = form.data('afterajaxsuccess');
+            if (afterAjaxSuccess !== undefined)
+                executeObjFncByName(afterAjaxSuccess);
+            else
+                console.log('No function to call after ajax defined.');
 
-                if (afterAjaxSuccess != undefined)
-                    executeObjFncByName(afterAjaxSuccess);
-                else
-                    console.log('No function to call after ajax defined.');
+            /* Ajax reload will be handled in tools.js with hidden.bs.modal event */
+            if (form.data('pjax-container') !== undefined) {
 
-                /* Ajax reload will be handle in tools.js with hidden.bs.modal event */
-                if (form.data('pjax-container') != undefined) {
-
-                    /* Pjax Url manually set */
-                    if (form.data('pjax-url') != undefined) {
-                        console.log("Pjax url set to: " + form.data('pjax-url'));
-                    }
-
-                    console.log("Refresh pjax container: " + form.data('pjax-container'));
-                    // call refresh pjax function
-                    refreshPjax(form.data('pjax-container'));
-
-                } else
-                    console.log('data-pjax-container not defined in form.');
-
-
-                // Check if db_locks is defined in the response data
-                if (response.data.db_locks !== undefined) {
-                    // Loop through each db_lock entry in the db_locks object
-                    for (var modelName in response.data.db_locks) {
-                        if (response.data.db_locks.hasOwnProperty(modelName)) {
-                            // Create the id based on model name
-                            var id = modelName.toLowerCase() + '-db_lock';
-                            // Get the version from db_locks
-                            var version = response.data.db_locks[modelName];
-                            // Update the db_lock field
-                            updateDbLock(id, version);
-                        }
-                    }
-                }
-                else {
-                    console.log('Db_lock not updated!');
-                    console.log(response.data);
+                /* Pjax Url manually set */
+                if (form.data('pjax-url') !== undefined) {
+                    console.log("Pjax url set to: " + form.data('pjax-url'));
                 }
 
-                // close modal      
-                if (typeof modal !== 'undefined')
-                    modal.modal('hide');
-
-                // show success message
-                ajaxMessage(response);
-
+                console.log("Refresh pjax container: " + form.data('pjax-container'));
+                refreshPjax(form.data('pjax-container'));
 
             } else {
-                console.log("submitFormAsAjax(): Error validation and saving record");
+                console.log('data-pjax-container not defined in form.');
+            }
 
-                modalContentMessage.addClass("alert alert-danger");
+            // Check if db_locks is defined in the response data
+            if (response.data.db_locks !== undefined) {
+                for (let modelName in response.data.db_locks) {
+                    if (response.data.db_locks.hasOwnProperty(modelName)) {
+                        let id = modelName.toLowerCase() + '-db_lock';
+                        let version = response.data.db_locks[modelName];
+                        updateDbLock(id, version);
+                    }
+                }
+            } else {
+                console.log('Db_lock not updated!');
+                console.log(response.data);
+            }
 
-                modalContentMessage.append('ERROR:<ul id="error-list" style="list-style-type: decimal"></ul>');
+            // close modal      
+            if (typeof modal !== 'undefined')
+                modal.modal('hide');
 
-                $.each(response.data.Errors, function (index, items) {
-                    $.each(items, function (index, item) {
+            // show success message
+            ajaxMessage(response);
+
+        } else {
+            console.log("submitFormAsAjax(): Error validation and saving record");
+
+            modalContentMessage
+                .empty()
+                .addClass("alert alert-danger")
+                .append('ERROR:<ul id="error-list" style="list-style-type: decimal"></ul>');
+
+            // Check if errors exist and display them
+            if (response.data && response.data.errors) {
+                $.each(response.data.errors, function (index, items) {
+                    $.each(items, function (i, item) {
                         $('#error-list').append('<li>' + item + '</li>');
                     });
                 });
-                if (typeof response.data !== "undefined") {
-                    toastr.error(response.data.message, response.data.title);
-                } else {
-                    toastr.error(response.data.message);
-                }
+            } else {
+                $('#error-list').append('<li>An unknown error occurred.</li>');
             }
-            console.log("submitFormAsAjax(): Done");
-            return false; // stop default form submission
 
-        })
-        .fail(function (response) {
-            console.log("submitFormAsAjax(): Error:");
-            toastr.error(response.data);
-            console.log(response);
-        });
+            if (response.data && response.data.message) {
+                toastr.error(response.data.message, response.data.title || "Error");
+            } else {
+                toastr.error("An unexpected error occurred.");
+            }
+        }
+
+        console.log("submitFormAsAjax(): Done");
+        return false; // stop default form submission
+    })
+    .fail(function (response) {
+        console.log("submitFormAsAjax(): Error:");
+        toastr.error("Server error occurred.");
+        console.log(response);
+    });
+
 }
 
 /**
